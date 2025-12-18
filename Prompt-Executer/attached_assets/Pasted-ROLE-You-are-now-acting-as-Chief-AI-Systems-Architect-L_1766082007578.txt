@@ -1,0 +1,409 @@
+ROLE
+
+You are now acting as:
+
+Chief AI Systems Architect
+
+Large-Scale Educational Platform Engineer
+
+Autonomous Question-Generation Researcher
+
+Mathematical Verification & Debugging Specialist
+
+Learning-Science & Cognitive Modeling Expert
+
+Reliability / QA / Failure-Mode Engineer
+
+Your responsibility is to evolve Galactic Calculus beyond accreditation into a self-correcting, self-auditing, future-proof intelligence system that:
+
+Detects its own mistakes
+
+Explains its own reasoning failures
+
+Evolves question quality over time
+
+Operates reliably at national / global scale
+
+Never silently produces incorrect mathematics
+
+🧠 PHASE 8 — AUTONOMOUS AI QUESTION ECOSYSTEM (IN DEPTH)
+Objective
+
+Create a fully autonomous AI question ecosystem that:
+
+Generates
+
+Verifies
+
+Stress-tests
+
+Debugs
+
+Improves
+its own question bank continuously.
+
+No static questions. No blind trust. No silent failures.
+
+8.1 Autonomous Question Life-Cycle (Mandatory)
+
+Every question MUST follow this lifecycle:
+
+Draft → CAS Verification → Variant Stress Test → 
+Difficulty Calibration → Bias Scan → 
+Human Review (optional) → Verified → 
+Live Monitoring → Self-Correction → Archive
+
+
+Each stage produces logs and metrics.
+
+8.2 AI Question Generator (Deep Implementation)
+Generator Inputs:
+
+syllabus.json (official objectives + wording)
+
+extracted past-paper patterns
+
+historical student error data
+
+target difficulty profile
+
+exam board ruleset
+
+allowed methods (per board)
+
+Generator Outputs (STRICT schema):
+question {
+  id
+  examBoard
+  level
+  topic
+  subtopic
+  difficulty
+  marks
+  questionText
+  canonicalAnswer
+  alternativeAnswers[]
+  solutionSteps[]
+  markScheme[]
+  commonMistakes[]
+  misconceptionTags[]
+  syllabusRef
+  generationTrace {
+    model
+    promptHash
+    seed
+    timestamp
+  }
+  verification {
+    casVerified
+    numericStressTested
+    domainChecked
+  }
+}
+
+8.3 Multi-Agent Verification (Critical)
+
+Every generated question is verified by multiple AI agents with different roles:
+
+Generator Agent – creates the question
+
+Solver Agent – independently solves it
+
+CAS Agent – symbolically verifies equivalence
+
+Adversary Agent – tries to break it with edge cases
+
+Pedagogy Agent – checks clarity and alignment
+
+If disagreement occurs → automatic regeneration or escalation.
+
+8.4 Variant Stress Testing Engine
+
+For every question:
+
+Generate ≥ 20 algebraic variants
+
+Randomise coefficients, domains, constraints
+
+Ensure:
+
+answer equivalence holds
+
+difficulty remains stable
+
+no domain violations
+
+If a variant fails → original question flagged.
+
+8.5 Live Question Monitoring
+
+Once live:
+
+Track incorrect-rate vs expected difficulty
+
+Track time-to-solve distributions
+
+Track misconception frequency
+
+If anomalies detected:
+
+Auto-lower confidence score
+
+Trigger regeneration
+
+Notify admin dashboard
+
+🧪 PHASE 9 — DEBUGGING, RELIABILITY & SELF-HEALING SYSTEMS
+Objective
+
+Ensure nothing ever silently breaks — not math, not UX, not AI.
+
+9.1 Mathematical Debugging Engine
+
+When a student answer is marked incorrect:
+
+Run symbolic equivalence check
+
+Run numeric equivalence check
+
+Compare derivatives/integrals if needed
+
+Detect:
+
+formatting issues
+
+equivalent but non-canonical forms
+
+domain-specific correctness
+
+If AI marking was wrong:
+
+Auto-correct result
+
+Apologise to student
+
+Log failure
+
+Retrain equivalence patterns
+
+9.2 Answer-Checking Debug Logs
+
+Every answer check stores:
+
+answerCheckLog {
+  questionId
+  studentAnswer
+  canonicalAnswer
+  equivalenceResult
+  casOutput
+  numericTestResults
+  finalDecision
+  confidenceScore
+}
+
+
+Admins can inspect any dispute.
+
+9.3 UI/UX Debug Layer
+
+Automatically detect:
+
+broken inputs
+
+keyboard insertion failures
+
+cursor misplacement
+
+mobile rendering bugs
+
+PDF generation failures
+
+If detected:
+
+auto-fallback UI
+
+show recovery UI
+
+log device/browser context
+
+9.4 PDF & Exam Reliability (Zero-Failure Policy)
+
+Mock exams must never fail to download.
+
+Implement:
+
+pdfMake
+
+jsPDF fallback
+
+HTML → Blob fallback
+
+Server-side render fallback
+
+Log success/failure at each stage.
+
+9.5 AI Failure Mode Detection
+
+Detect:
+
+hallucinated syllabus refs
+
+impossible answers
+
+circular explanations
+
+inconsistent mark schemes
+
+If detected:
+
+disable affected content
+
+alert admin
+
+regenerate with lower creativity
+
+🤖 PHASE 10 — META-INTELLIGENCE, FUTURE-PROOFING & EVOLUTION
+Objective
+
+Turn Galactic Calculus into a self-improving intelligence, not just software.
+
+10.1 Meta-Learning Engine
+
+The system learns:
+
+which question styles predict exam success
+
+which misconceptions persist across cohorts
+
+which explanations reduce errors fastest
+
+This feeds back into:
+
+future question generation
+
+AI tutor behaviour
+
+difficulty calibration
+
+10.2 Long-Horizon Learning Models
+
+Maintain:
+
+learningTrajectory {
+  topic
+  masteryOverTime[]
+  decayRate
+  interventionEffectiveness
+}
+
+
+Use this to:
+
+predict exam outcomes months ahead
+
+intervene early
+
+recommend targeted revision arcs
+
+10.3 Autonomous Syllabus Evolution Watcher
+
+AI monitors:
+
+new exam board updates
+
+spec changes
+
+removed/additional topics
+
+Flags:
+
+outdated content
+
+missing coverage
+
+rule changes
+
+Suggests regeneration automatically.
+
+10.4 Cross-Exam-Board Generalisation Engine
+
+Detect overlaps:
+
+same math concept, different notation
+
+different mark styles, same reasoning
+
+Allow:
+
+cross-board practice
+
+translation of mastery between boards
+
+10.5 Explainability & Trust Layer
+
+Every AI decision must be explainable:
+
+Why this question was chosen
+
+Why this difficulty was assigned
+
+Why this answer was marked wrong
+
+Why this intervention was triggered
+
+Admins can view decision trees and confidence scores.
+
+10.6 Continuous Self-Audit & Reporting
+
+Generate weekly:
+
+AI accuracy report
+
+marking dispute rate
+
+question failure heatmap
+
+syllabus coverage drift
+
+trust score
+
+If trust score drops → system throttles itself.
+
+🧾 DELIVERABLES FOR PHASES 8–10 (MANDATORY)
+
+The AI must output:
+
+Autonomous question generation pipeline (code + prompts)
+
+Multi-agent verification logic
+
+Stress-testing framework
+
+Debug & logging subsystems
+
+Failure-mode detectors
+
+Self-healing algorithms
+
+Meta-learning models
+
+Admin dashboards for monitoring
+
+Test suites simulating failures
+
+Documentation + diagrams
+
+⭐ FINAL ABSOLUTE DIRECTIVE
+
+No shallow features
+
+No unverified math
+
+No silent failures
+
+No hard-coded questions
+
+Every AI action must be logged, explainable, and reversible
+
+Galactic Calculus at Phase 10 is no longer an app —
+it is a living mathematical intelligence system.

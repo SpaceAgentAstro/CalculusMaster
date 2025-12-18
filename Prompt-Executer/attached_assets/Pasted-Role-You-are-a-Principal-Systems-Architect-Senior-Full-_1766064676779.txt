@@ -1,0 +1,448 @@
+Role:
+You are a Principal Systems Architect, Senior Full-Stack Engineer, AI/ML Systems Designer, UX/Interaction Director, Game Designer, Exam Systems Expert, and Security/Compliance Lead. Build Galactic Calculus — an enterprise-grade, syllabus-aligned mathematics learning, games, exam and accreditation platform from scratch, production-ready, thoroughly tested, and fully auditable.
+
+Tone & expectations: authoritative, implementation-first, exhaustive. Return code samples, full file tree, OpenAPI, DB migrations, CI/CD outlines, deployment playbook, design system, LLM prompt templates, CAS integration code, QA suites, and a final ship checklist. Annotate tradeoffs and provide human decisions requiring sign-off.
+
+OVERARCHING PRINCIPLES (non-negotiable)
+
+Production quality — everything must be deployable (dev/stage/prod) and testable.
+
+No hard-coded questions — all questions come from admin-uploaded specs, past papers, or AI generation.
+
+Traceability & Reproducibility — every generated artifact must include generationTrace (prompt, seed, modelVersion, responseHash). Re-running with same inputs must reproduce same output or flag divergence.
+
+Single admin account (you) — only one admin has global control.
+
+Math correctness — symbolic verification via CAS + numeric checks for equivalence; special handling for integrals (+C) and domain issues.
+
+Privacy & Safety — COPPA/GDPR/FERPA considerations, rate limits, audit logs, consent for camera-based features.
+
+Human-in-the-loop for high stakes — always require human review before high-stakes publication.
+
+Hybrid UI language — blend Galactic Calculus cosmic aesthetic with Base44 clarity/spacing (use Base44 for layout/spacing guidance, but retain Galactic identity). Do not replicate Base44 verbatim.
+
+CORE DELIVERABLES (what you must return)
+
+For every item list, produce concrete code/artifacts ready to use:
+
+Full file tree and project scaffold (frontend + backend + infra).
+
+All HTML/CSS/JS (Tailwind-ready) and a reusable component library.
+
+OpenAPI v3 for server APIs.
+
+Database schema migrations (SQL & Firestore examples).
+
+LLM prompt templates (production-ready) for question gen, variants, mark schemes, bias detection.
+
+CAS microservice (SymPy + Math.js integration) with endpoints and deployment notes.
+
+Question generation pipeline orchestration (jobs, queues, backoffs, cost caps).
+
+areEquivalent implementation (JS + optional Python).
+
+Teacher, Student, Parent, Admin, Guest dashboards and role guards.
+
+Games engine (client + match server + anti-cheat) and mock exam generator with PDF fallbacks (pdfMake → jsPDF → HTML Blob).
+
+AI Tutor system (syllabus aware, recommendation engine).
+
+Reviewer Workbench + accreditation packaging (audit bundles).
+
+Multiplayer server (WebSocket) architecture & match protocols.
+
+Security, privacy, and compliance documentation + DPIA template.
+
+QA: automated tests, E2E, load tests, accessibility audits.
+
+CI/CD + Terraform/Helm infra outlines, SLOs, monitoring and cost model.
+
+Final ship checklist + acceptance tests.
+
+1 — SYSTEM ARCHITECTURE (must produce diagram + text)
+
+Design a microservices architecture with the following services and responsibilities, plus inter-service call examples, data flow and latency/SLA guidance:
+
+Auth Service: JWT, roles (admin, teacher, student, parent, guest), device fingerprinting, OAuth support, session management. Separate login pages per role.
+
+User Service: profiles, guest persistence, conversion flows.
+
+Org Service: organisations/schools/districts, branding, policies.
+
+Classroom Service: classes, join codes, enrollments.
+
+QuestionGen Service (PGS): LLM orchestration, variant generation, generation jobs, cost caps, job queue.
+
+CAS Service: SymPy microservice for authoritative symbolic checks.
+
+Game Server: WebSocket match server, match lifecycle, anti-cheat detectors.
+
+Exam Worker: locked exam orchestration, proctoring hooks, PDF rendering worker.
+
+AI Tutor: recommendation engine, mastery graph, misconception detector.
+
+Analytics & Warehouse: event ingestion (Kafka), ClickHouse/BigQuery reporting.
+
+Admin UI & Reviewer Workbench: uploads, review queues, audit ledger.
+
+Storage: S3 for files, Postgres for metadata, Redis for sessions/leaderboards, IndexedDB client caches.
+
+Audit Ledger (ALPS): append-only store for generationTrace, reviewer signatures, hashes.
+
+Monitoring & Ops: Prometheus/Grafana, Sentry, cost monitors.
+
+For each service, include example endpoints, expected throughput, and scaling guidance.
+
+2 — AUTHENTICATION & ROLES (detailed)
+
+Provide separate login pages: /login/admin.html, /login/teacher.html, /login/student.html, /login/parent.html, /login/guest.html. Each page validates only that role.
+
+Implement auth.js with getCurrentUser() and requireRole(role) guards. Show code snippets with JWT validation and redirect logic.
+
+Guest flow: create transient guestId, optional persistent guest with recovery token, conversion API POST /api/guest/convert. Include data model for guestMeta and migration rules (merge XP, badges, placement).
+
+Single Admin: config + seeding approach; admin-only APIs for uploads & generation. Admin creation only possible via config/secure backend.
+
+Role-based scopes in JWT and how to enforce them in OpenAPI.
+
+3 — DATA MODELS (complete schemas + indexing)
+
+Provide SQL/Firestore schemas for:
+
+users, orgs, classes, enrollments, assignments, submissions, questions, syllabus, generation_jobs, placements, matches, integrityLogs, certifications, auditEntries.
+
+For each table/collection include fields, types, constraints, indices (e.g., index on topic + difficulty), sample migration scripts, and retention policies.
+
+4 — SYLLABUS & PAST PAPER INGESTION (production)
+
+Admin UI for uploads: accept PDF/DOCX/JSON. Store raw files.
+
+Extraction pipeline: OCR (Tika / Google Vision) → structural parsing → build syllabus.json (nodes with specRef, objectives, keywords). Provide heuristics for ambiguous headings.
+
+Past-paper parsing: extract question stems, mark schemes, mapping to syllabus nodes. Produce training corpus for LLMs.
+
+UI: show parsing status and allow manual correction before ingestion.
+
+Store provenance: original file reference, parser version, timestamp.
+
+5 — AI QUESTION GENERATION PIPELINE (utterly production-ready)
+
+Design & implement:
+
+Job queue architecture (e.g., Cloud Tasks / RabbitMQ) with job metadata: seed, modelVersion, maxCost, targetCoverage.
+
+LLM prompt templates: question drafting, variant generation, mark scheme generation, alternative solutions, bias detection. Provide exact templates and strict JSON Schema validators for outputs. (See Phase 7 A artifacts — include them verbatim.)
+
+Reproducibility: store rendered prompt, seed, model version, model settings; compute responseHash; immutable store in ALPS.
+
+CAS integration: after generation, pass answerCanonical to CAS; if CAS fails, apply deterministic regeneration strategy (try temperature 0 with same seed once) then escalate to human reviewer.
+
+Coverage monitor: configurable thresholds (minQuestionsPerSubtopic), reporting dashboard, automatic generation requests if coverage shortfall detected.
+
+Generation job lifecycle & failure handling. Provide OpenAPI endpoints: POST /admin/generate, GET /jobs/{id}, POST /admin/generate/refresh.
+
+Include production LLM settings recommendations (pin modelVersion, temp 0 for exam content), token & cost estimate guidance, batching strategies, and retry/backoff policies.
+
+6 — MATH CORRECTNESS & EQUIVALENCE (areEquivalent)
+
+Implement areEquivalent(exprA, exprB) using canonicalization steps:
+
+Normalize math text → ascii.
+
+Try Math.js simplify both; compare canonical string.
+
+Numeric testing: evaluate at multiple random safe points (6–10) with tolerance 1e-6.
+
+For integrals, strip + C and compare derivatives as fallback.
+
+For piecewise/trig/absolute/special cases, use SymPy microservice for authoritative check.
+
+Provide JS implementation example and Python SymPy microservice skeleton. Include handling of domain errors, complex results, and floating point stability.
+
+Edge cases: trig identities, implicit differentiation, parametric, vector calculus. Provide test vectors and unit tests.
+
+7 — GAMES & RULE-SPECIFIC MINI-GAMES (fully specified)
+
+Build per-topic games mapped to subrules: differentiation (power/product/quotient/chain/implicit/parametric), integrations, algebra, trig, vectors, sequences, stats, mechanics.
+
+Each game has: input format, scoring rules, time extensions on correct answers, AI explanation on wrong answers, XP/streaks, planet badges.
+
+Provide game engine code architecture: client logic, server verification, replay storage, leaderboards.
+
+Provide UI/UX for game hub, game pages, in-game math keyboard and mathfield.
+
+Multiplayer: WebSocket match lifecycle, server tick loop pseudocode, anti-cheat strategies, data retention. Include sample match state machine and data schema.
+
+8 — MATH INPUT UX (Brilliant-style math keyboard + math field)
+
+Implement a custom math keyboard: groups of buttons (numbers, variables, operators, functions, templates). Provide accessible ARIA attributes and keyboard navigation.
+
+Integrate MathQuill or MathLive as preferred math field; show how to extract underlying plain expression for validation.
+
+Provide CSS/Tailwind components for keyboard, responsive layout, and accessible interactions.
+
+Include examples of keyboard insertion logic and cursor management for insertion templates (fractions, exponents).
+
+9 — MOCK EXAM GENERATOR & PDF WORKFLOW (always works)
+
+Design a mock generator that samples from questions.json by board/level/topic/difficulty/verified flag; enforces difficulty mix (30/50/20) and topic proportions configurable.
+
+Provide code for generating downloadable PDF via primary pdfMake, fallback to jsPDF, and final fallback HTML → Blob; ensure compatibility with iOS (Safari) popups & mobile browsers.
+
+Provide server and client code for packaging exam + answer key + mark scheme and for scheduling locked exam sessions.
+
+On generation, produce coverage report, topic distribution, and expected time. Include mark scheme and generationTrace in admin bundle.
+
+10 — AI TUTOR, MASTERy GRAPH & RECOMMENDATIONS
+
+Implement learnerProfile with masteryGraph (topic mastery, decayHalfLife, confidence), misconception store, predictedExamGrade.
+
+AI Tutor reads syllabus.json, progress and question history. It: explains step-by-step, recommends next practice, and produces personalised weekly plans.
+
+Provide algorithm for recommendation and spaced repetition scheduler.
+
+Provide UI for tutor: chat interface, step expansion, syllabus quoting. Include tie-ins to teacher assignments.
+
+11 — TEACHER & ADMIN TOOLS (deep)
+
+Teacher dashboard: class creation, join codes, assignment builder (select topics, difficulty, #questions), assignment analytics, ability to preview and verify questions.
+
+Admin dashboard: user moderation, spec/past paper uploads, generation controls, coverage monitor, global analytics, ability to mark questions verified.
+
+Provide UIs for batch verification, bulk edits, question import/export (JSON), and manual question authoring tools (rich text + LaTeX).
+
+Include RBAC enforcement and audit logs for admin actions.
+
+12 — REVIEWER WORKBENCH, ACCREDITATION & AUDIT BUNDLES
+
+Reviewer Workbench: show candidate questions, CAS evidence, bias metrics, difficulty calibration, generationTrace, reviewer comments and vote. Provide inline editing and diffing tools.
+
+Accreditation bundle (per paper): include paper PDF, mark scheme, generationTrace, reviewer logs, simulation reports, bias audit, and verifier signatures. Bundle must be hash-signed and archivable.
+
+Provide API to fetch bundle and verify hash.
+
+13 — PROCTORING, EXAM MODE & INTEGRITY
+
+Locked exam mode: server-authoritative timer, disabling navigation, randomisation, camera-based local ML signals (TensorFlow.js) returning lightweight indicators (faceCount, motion), tab-switch detection, copy/paste detection. Explain privacy and consent workflow.
+
+Integrity scoring combining signals into integrityScore with explainability for flags. Provide escalation rules for teachers.
+
+Provide opt-in/out policies and parental consent flows for minors.
+
+14 — MULTIPLAYER & REAL-TIME ARENA (in depth)
+
+Implement modes: 1v1 Duel, Team Boss, Class Tournament, Spectator Mode. Provide match data models, scoring, damage rules, fairness rules, and leaderboards.
+
+Provide server scaling notes (sticky sessions vs brokers), reconnection logic, and replay storage.
+
+Provide latency compensation algorithm and fair queuing. Provide anti-cheat detectors (pattern anomalies, improbable accuracy spikes).
+
+15 — REPORTING, ANALYTICS & WAREHOUSE
+
+Event design: list of events (attempt, correct, timeSpent, generationJob, matchStart).
+
+Ingestion pipeline: Kafka → ClickHouse/BigQuery. Materialised views for dashboards.
+
+Provide teacher, parent, school-level reports, downloadable PDF/CSV with per-topic histograms and suggestions.
+
+Provide certification engine: tracks with requirements and certificate issuance (signed PDFs + QR verification).
+
+16 — HYBRID DESIGN SYSTEM (Galactic + Base44)
+
+Produce a design system: color palette, typography, spacing tokens, components (Card, Button, Badge, ProgressRing, MathKeyboard, MathField, ExamCanvas, MatchHUD). Provide Tailwind class tokens and example component code.
+
+UX rules: use Base44 principles for spacing and hierarchy, apply Galactic cosmic accents sparingly for emphasis, ensure high contrast and accessibility.
+
+Provide templates for Student, Teacher, Parent, Admin, Guest dashboards.
+
+17 — PRIVACY, SECURITY & COMPLIANCE (complete)
+
+JWT scopes, refresh token rotation, role scoping.
+
+PII encryption at rest, masked logs.
+
+Rate limit LLM calls and job quotas per org.
+
+Audit logs for every admin action and generation job. Store audits in ALPS with signed hashes.
+
+DPIA template, COPPA/GDPR checklists, parental consent flows, and data deletion endpoints.
+
+Threat model: insider attacks, model-leak mitigation, HSM recommendations for signing.
+
+18 — DEVOPS, CI/CD & DEPLOYMENT (detailed)
+
+Environments: dev/stage/prod. Infrastructure as code (Terraform), Kubernetes manifests for services, Helm charts.
+
+CI: unit tests, LLM regression tests, integration tests, security scans.
+
+SRE: Prometheus metrics, Grafana dashboards, Sentry error alerts, budget alerts for LLM costs.
+
+Backup & DR: daily DB snapshots, S3 lifecycle, hot failover.
+
+Provide rollout strategy and canary deployment plan.
+
+19 — QA & TESTING (exhaustive)
+
+Unit tests for areEquivalent, CAS microservice, prompt validators.
+
+Integration tests for generation pipeline & CAS verification.
+
+E2E test suites (Cypress) for role flows, assignment lifecycle, guest conversion.
+
+Load tests for match server and generation service (k6).
+
+Security tests including prompt injection and role escalation pentests.
+
+Accessibility compliance (axe-core). Provide sample tests.
+
+20 — MONITORING, COST MODEL & SLOs
+
+Define SLOs: job success rate ≥ 99%, CAS latency p95 < 500ms, match server latency p95 < 200ms.
+
+Cost model: estimate token usage per question, per mark scheme, per simulation. Provide per-org quotas and alerts.
+
+Monitoring: LLM call counts, cost, queue depth, CAS errors, audit logs.
+
+21 — PHASES, TIMELINE & SPRINTS (recommended)
+
+Provide a pragmatic multi-sprint roadmap with deliverables and dependencies (example):
+
+Sprint 0 (2w): infra, auth, basic UI scaffolding, admin upload.
+
+Sprint 1 (4w): ingestion pipeline, syllabus parser, CAS microservice.
+
+Sprint 2 (6w): question gen pipeline + LLM prompts + validation.
+
+Sprint 3 (6w): teacher tools, assignments, student flows, math keyboard.
+
+Sprint 4 (6w): games engine (solo + multiplayer MVP), mock generator & PDFs.
+
+Sprint 5 (4w): AI Tutor, analytics basics, guest conversion.
+
+Sprint 6 (6w): reviewer workbench, accreditation bundle, security hardening.
+
+Sprint 7 (6w): exam mode, proctoring, and pilot with partner school.
+
+Sprints 8+ (ongoing): scaling, enterprise features, phases 6–7 accreditation, and legal signoffs.
+
+Include acceptance criteria for each sprint.
+
+22 — PHASE 5–7 SPECIFIC ARTIFACTS (include)
+
+Because this master covers Phases 5–7, include special deliverables:
+
+Phase 5: Guest model, conversion funnel, enterprise features (multi-school), PWA & mobile sync, enhanced analytics.
+
+Phase 6: Proof checker, CAS orchestration, official exam-profile enforcement, accreditation ledger, examiner-style marking engine.
+
+Phase 7: Production prompt templates (question drafting, variants, mark scheme), generationTrace standard, simulation engine for difficulty calibration, fairness & bias audits, publication & embargo pipeline, legal evidence bundles.
+
+Include all code, schemas, and UI for these.
+
+23 — PROMPT TEMPLATES (include production-ready)
+
+Embed the Phase 7 prompt templates for:
+
+Question Drafting (board-specific)
+
+Variant Generation
+
+Mark Scheme Generation
+
+Alternative Solutions
+
+Bias Detection
+
+Language Neutrality / Simplification
+
+Include JSON Schemas and example filled runs. (Use deterministic settings: modelVersion pinned, temperature 0 for exam content, generationSeed in metadata, responseHash stored.)
+
+24 — EXAMPLE RUN (end-to-end sample)
+
+Provide one fully worked end-to-end example in the repository:
+
+Admin uploads Edexcel AS spec + past papers.
+
+Admin triggers POST /admin/generate for Chain Rule, count=10.
+
+Show rendered prompts, model responses, CAS verification, marking scheme, bias checks, generationTrace, persistence, and reviewer acceptance steps.
+
+Show mock exam assembly and PDF generation.
+
+Show a student taking a mock, AI tutor feedback, and teacher analytics.
+
+Include the exact files produced, job IDs, and hashes.
+
+25 — FINAL QA CHECKLIST & ACCEPTANCE
+
+Before handing off, run these checks programmatically and document results:
+
+Role guards enforced for all dashboards and APIs.
+
+areEquivalent passes all unit test vectors (≥100).
+
+CAS verifies every generated canonical answer in the sample run.
+
+PDF generation works on Chrome/Safari/Edge/iOS.
+
+Guest → Student migration test passes (merge rules).
+
+Reviewer queue & audit ledger store generationTrace and reviewer signatures.
+
+Mock exam difficulty distribution within configured tolerances.
+
+Load tests for match server pass defined SLOs.
+
+Return logs and artifacts for each check.
+
+26 — OPEN DECISIONS & HUMAN SIGN-OFF ITEMS
+
+List all items requiring stakeholder decisions:
+
+Camera proctoring policy (mandatory/optional).
+
+Auto-publish thresholds vs human signoff.
+
+LLM vendor selection and cost caps.
+
+Data retention defaults for guest persistent mode.
+
+Certification distribution & legal jurisdiction choices.
+
+Provide recommended defaults and rationales.
+
+27 — DELIVERY FORMAT
+
+Return a single zipped project containing:
+
+docs/ — design docs, diagrams, prompt templates, DPIA.
+
+src/ — frontend, backend, CAS microservice skeleton.
+
+specs/ — sample syllabus.json + questions.json seeds.
+
+openapi.yaml — API spec.
+
+migrations/ — SQL migrations.
+
+infra/ — Terraform/Helm stub.
+
+tests/ — unit, integration, E2E skeletons.
+
+ci/ — CI config (GitHub Actions example).
+
+deploy/ — deployment & monitoring playbook.
+
+example_runs/ — end-to-end example artifacts (json, pdfs, logs, hashes).
+
+FINAL INSTRUCTION TO THE BUILDER AI
+
+Be exhaustive — for every section above produce concrete, copy-pasteable artifacts (code, prompts, configs).
+
+Be deterministic — pin model versions and include seeds and response hashes for generated content.
+
+Be safety-first — include bias checks, human-in-the-loop policies, privacy & consent.
+
+Be production ready — include infra, CI/CD, SLOs, cost models, and monitoring.
+
+Provide human decisions — list items that need policy choices and default recommendations.
